@@ -1,3 +1,6 @@
 {
-	"get" : "instruments"
+	"root": "http://localhost:8000/",
+	"get_all" : "instruments",
+	"get_id" : "instrument/",
+	"get_num_instruments" : "num_instruments"
 }

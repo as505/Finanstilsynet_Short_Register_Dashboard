@@ -15,7 +15,7 @@ for inst in data:
 
 app.add_middleware(
 	# We allow all origins since this runs on localhost, 
-	# for hosting on the web this needs to be changed to point to the actual frontend
+	# for hosting on the web this needs to be changed to point to the frontend host
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
@@ -27,6 +27,8 @@ app.add_middleware(
 def get_root():
 	return{"Welcome"}
 
+# Returns an instrument item by id,
+# 
 @app.get("/instrument/{id}/")
 def get_instrument_id(id):	
 	return[INSTRUMENT_DATA[int(id)]]
@@ -35,3 +37,8 @@ def get_instrument_id(id):
 @app.get("/instruments")
 def get_all_instruments():
 	return[INSTRUMENT_DATA]
+
+
+@app.get("/num_instruments")
+def get_num_instruments():
+	return {'count' : len(INSTRUMENT_DATA)}

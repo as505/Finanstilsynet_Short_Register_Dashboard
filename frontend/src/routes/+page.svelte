@@ -1,38 +1,26 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	onMount(() =>{
-		var response = fetch("http://localhost:8000/")
-	})
+	import URLLIST from '$lib/GLOBAL_URLS.json'
 
-	async function Test(){
-		// The data gets returned as an array with length 1,
-		// so we need to 
-		let data = await GetInstruments();
-		console.log(data);
+	let count = $state(-1)
+
+	async function Get_num_instruments(): Promise<number>{
+		let url = URLLIST['root'] + URLLIST['get_num_instruments'];
+		let response = await fetch(url)
+			.then(d => d.json())
+			.catch(e => console.error("ERROR in Get_num_instruments()"))
 		
+		return response['count'];
 	}
 
-	async function GetInstruments(){
-		var url = "http://localhost:8000/instruments";
-		try {
-			let response = await fetch(url);
-			if (!response.ok) {
-				throw new Error(`Response status: ${response.status}`);
-			}
-			let result = response.json();
-			return result;
-
-		} catch {
-			console.error("API Error fetching instrument data in GetInstruments()");
- 		}
+	async function buttonHandler(){
+		count = await Get_num_instruments()
 	}
 	
 </script>
 
-<div id="dataContainer">
-
+<div class="instrumentBoxContainer">
+	<button onclick={buttonHandler}>
+		<h1> {count} </h1>
+	</button>
 </div>
-
-<button onclick={Test}>
-Load Data
-</button>
