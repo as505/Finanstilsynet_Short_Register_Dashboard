@@ -1,0 +1,1 @@
+# This is a WIP project, using Svelte and FastAPI to create an interactive dashboard to display short trading data from Finanstilsynet's 'Short Sale' register
