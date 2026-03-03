@@ -31,12 +31,12 @@ def get_root():
 # 
 @app.get("/instrument/{id}/")
 def get_instrument_id(id):	
-	return[INSTRUMENT_DATA[int(id)]]
+	return INSTRUMENT_DATA[int(id)]
 
 
 @app.get("/instruments")
 def get_all_instruments():
-	return[INSTRUMENT_DATA]
+	return INSTRUMENT_DATA
 
 
 @app.get("/num_instruments")

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import URLLIST from '$lib/GLOBAL_URLS.json'
+	import URLLIST from '$lib/GLOBAL_URLS.json';
+	import Instrument from "./instrument.svelte";
 
 	let count = $state(-1)
 
@@ -23,4 +23,8 @@
 	<button onclick={buttonHandler}>
 		<h1> {count} </h1>
 	</button>
+
+	{#each {length: count}, id}
+		<Instrument self_id={id}></Instrument>
+	{/each}
 </div>
