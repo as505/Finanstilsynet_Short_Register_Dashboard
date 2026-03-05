@@ -54,6 +54,9 @@
 				<p>Date: {events[id]['date']}<br>Short %: {events[id]['shortPercent']}<br>Shares: {events[id]['shares']} </p>
 				<details title="Underlying Positions">
 					<summary>Positions</summary>
+					{#each {length : events[id]['activePositions']}, idx}
+						<p> a </p>
+					{/each}
 				</details>
 			{/each}
 		</details>

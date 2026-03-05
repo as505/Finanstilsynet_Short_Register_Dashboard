@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 import json
@@ -24,14 +24,40 @@ app.add_middleware(
 )
 
 @app.get("/")
-def get_root():
+def get_root(q: str | None = None):
 	return{"Welcome"}
 
+# Helper function to check if ID is within bounds
+def confirm_idx(id:int, list, errorMessage):
+	if (id >= len(list)):
+		raise HTTPException(status_code=404, detail=errorMessage)
+	return
+
+
 # Returns an instrument item by id,
-# 
-@app.get("/instrument/{id}/")
-def get_instrument_id(id):	
-	return INSTRUMENT_DATA[int(id)]
+INSTRUMENT_ID_PATH = "/instrument/{id}"
+@app.get(INSTRUMENT_ID_PATH)
+def get_instrument_id(id: int):	
+	confirm_idx(id, INSTRUMENT_DATA, "Instrument ID not found")
+	return INSTRUMENT_DATA[id]
+
+
+@app.get(INSTRUMENT_ID_PATH + "/events")
+# event index needs to be a string instead of an int, otherwise event=0 would be considered None
+def get_instrument_events(id: int, event: str | None = None, p: bool = False):
+	instrument = get_instrument_id(id)
+	eventList = instrument['events']
+	if event:
+		# Convert from string to int to index list
+		event = int(event)
+		if p:
+			positionList = eventList[event]['activePositions']
+			return positionList
+		return eventList[event]
+	else:
+		return eventList
+
+
 
 
 @app.get("/instruments")
