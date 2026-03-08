@@ -1,8 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import requests
-import json
-import pathlib
+
 
 app = FastAPI()
 # Not exposed to the frontend
@@ -23,41 +22,49 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 def get_root(q: str | None = None):
 	return{"Welcome"}
 
 # Helper function to check if ID is within bounds
-def confirm_idx(id:int, list, errorMessage):
+def confirm_valid_idx(id:int, list, errorMessage):
 	if (id >= len(list)):
 		raise HTTPException(status_code=404, detail=errorMessage)
-	return
 
 
 # Returns an instrument item by id,
-INSTRUMENT_ID_PATH = "/instrument/{id}"
-@app.get(INSTRUMENT_ID_PATH)
-def get_instrument_id(id: int):	
-	confirm_idx(id, INSTRUMENT_DATA, "Instrument ID not found")
-	return INSTRUMENT_DATA[id]
+@app.get("/instrument/{id}")
+def get_instrument(id: int):	
+	confirm_valid_idx(id, INSTRUMENT_DATA, "Instrument not found")
+	return INSTRUMENT_DATA[id]	
 
 
-@app.get(INSTRUMENT_ID_PATH + "/events")
-# event index needs to be a string instead of an int, otherwise event=0 would be considered None
-def get_instrument_events(id: int, event: str | None = None, p: bool = False):
-	instrument = get_instrument_id(id)
-	eventList = instrument['events']
-	if event:
-		# Convert from string to int to index list
-		event = int(event)
-		if p:
-			positionList = eventList[event]['activePositions']
-			return positionList
-		return eventList[event]
-	else:
-		return eventList
+@app.get("/instrument/{id}/events")
+def get_instrument_event_list(id: int):
+	# Index is checked for validity in 'get_instrument_id()'
+	instrument = get_instrument(id)
+	return instrument['events']
 
 
+@app.get("/instrument/{id}/{eventID}")
+def get_instrument_event(id:int, eventID:int):
+	eventList = get_instrument_event_list(id)
+	confirm_valid_idx(eventID, eventList, "Event not found in instrument")
+	return eventList[eventID]
+
+
+@app.get("/instrument/{id}/{eventID}/positions")
+def get_event_position_list(id:int, eventID:int):
+	event = get_instrument_event(id, eventID)
+	return event['activePositions']
+
+
+@app.get("/instrument/{id}/{eventID}/{positionID}")
+def get_event_position(id:int, eventID:int, positionID:int):
+	positionList = get_event_position_list(id, eventID)
+	confirm_valid_idx(positionID, positionList, "Position not found int event")
+	return positionList[positionID]
 
 
 @app.get("/instruments")
