@@ -1,6 +1,7 @@
 <script lang="ts">
 	import URLLIST from '$lib/GLOBAL_URLS.json';
 	import Instrument from "./instrument.svelte";
+	import { onMount } from 'svelte';
 
 	let count = $state(-1)
 
@@ -10,21 +11,19 @@
 			.then(d => d.json())
 			.catch(e => console.error("ERROR in Get_num_instruments()"))
 		
-		return response['count'];
+		return response;
 	}
 
-	async function buttonHandler(){
+	onMount(async() => {
 		count = await Get_num_instruments()
-	}
+	})
 	
 </script>
 
 <div class="instrumentBoxContainer">
-	<button onclick={buttonHandler}>
-		<h1> {count} </h1>
-	</button>
-
 	{#each {length: count}, id}
-		<Instrument self_id={id}></Instrument>
+		<div class="Instrument Link">
+			<a href="/instrument?id={id}">{id}</a>
+		</div>
 	{/each}
 </div>

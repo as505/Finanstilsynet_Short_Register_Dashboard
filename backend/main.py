@@ -74,4 +74,4 @@ def get_all_instruments():
 
 @app.get("/num_instruments")
 def get_num_instruments():
-	return {'count' : len(INSTRUMENT_DATA)}
+	return len(INSTRUMENT_DATA)
