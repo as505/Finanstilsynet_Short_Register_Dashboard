@@ -8,9 +8,13 @@ app = FastAPI()
 DATASET_URL = "https://ssr.finanstilsynet.no/api/v2/instruments"
 # Get and store dataset in memory when server is started
 INSTRUMENT_DATA = list()
+INSTRUMENT_NAMES = list()
 data = requests.get(DATASET_URL).json()
 for inst in data:
 	INSTRUMENT_DATA.append(inst)
+	INSTRUMENT_NAMES.append(inst['issuerName'])
+
+
 
 app.add_middleware(
 	# We allow all origins since this runs on localhost, 
@@ -63,13 +67,13 @@ def get_event_position_list(id:int, eventID:int):
 @app.get("/instrument/{id}/{eventID}/{positionID}")
 def get_event_position(id:int, eventID:int, positionID:int):
 	positionList = get_event_position_list(id, eventID)
-	confirm_valid_idx(positionID, positionList, "Position not found int event")
+	confirm_valid_idx(positionID, positionList, "Position not found in event")
 	return positionList[positionID]
 
 
 @app.get("/instruments")
 def get_all_instruments():
-	return INSTRUMENT_DATA
+	return INSTRUMENT_NAMES
 
 
 @app.get("/num_instruments")

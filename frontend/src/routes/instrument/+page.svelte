@@ -7,6 +7,8 @@
 	
 	let is_in = $state("Null")
 	let issuer_name = $state("Null")
+	let num_events = $state(-1)
+	let eventList:string[] = $state([])
 
 	async function fetch_instrument_data(){
 		let url = URLLIST['root'] + URLLIST['get_instrument'] + id;
@@ -21,7 +23,11 @@
 		fetch_instrument_data().then((d) =>
 			(
 			is_in = d['isin'],
-			issuer_name = d['issuerName']
+			issuer_name = d['issuerName'],
+			num_events = d['events'].length,
+			d['events'].forEach(e => {
+				eventList.push(e['date'])
+			})
 			)
 		)
 	})
@@ -30,6 +36,14 @@
 
 <div>
 	<h1>{issuer_name}</h1>
-	<h2>{is_in}</h2>
+	<h3>{is_in}</h3>
+</div>
+<div class="eventList">
+	<h2>Short events</h2>
+	{#each {length: num_events}, idx}
+	<div>
+		<a href="/instrument/{id}/{idx}">{eventList[idx]}</a>
+	</div>
+	{/each}
 </div>
 
