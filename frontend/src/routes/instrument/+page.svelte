@@ -6,8 +6,8 @@
 
 
 
-	let id = page.url.searchParams.get('id')
-	let positionIDX = $state(0)
+	let id:number = parseInt(page.url.searchParams.get('id'))
+	let eventIDX = $state(0)
 	
 	let is_in = $state("Null")
 	let issuer_name = $state("Null")
@@ -40,8 +40,8 @@
 	})
 
 	function handle_load_event(idx:number){
-		positionIDX = idx
-		console.log(positionIDX)
+		eventIDX = idx
+		console.log(eventIDX)
 	}
 
 </script>
@@ -64,8 +64,10 @@
 	</div>
 
 	<div class="eventInspectorPanel">
-		<h2>test</h2>
-		<UnderlyingPosition e_id="{id}", bind:p_idx="{positionIDX}"/>
+		<h2>Info</h2>
+		{#key eventIDX}
+		<UnderlyingPosition i_id={id} e_idx={eventIDX}/>
+		{/key}
 	</div>
 </div>
 
