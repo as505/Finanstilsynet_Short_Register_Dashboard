@@ -1,14 +1,21 @@
 <script lang="ts">
 	import URLLIST from '$lib/GLOBAL_URLS.json';
+	import UnderlyingPosition from './underlyingPosition.svelte';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 
+
+
 	let id = page.url.searchParams.get('id')
+	let positionIDX = $state(0)
 	
 	let is_in = $state("Null")
 	let issuer_name = $state("Null")
 	let num_events = $state(-1)
-	let eventList:string[] = $state([])
+	let eventList = $state([])
+
+	
+
 
 	async function fetch_instrument_data(){
 		let url = URLLIST['root'] + URLLIST['get_instrument'] + id;
@@ -26,24 +33,59 @@
 			issuer_name = d['issuerName'],
 			num_events = d['events'].length,
 			d['events'].forEach(e => {
-				eventList.push(e['date'])
+				eventList.push(e)
 			})
 			)
 		)
 	})
+
+	function handle_load_event(idx:number){
+		positionIDX = idx
+		console.log(positionIDX)
+	}
+
 </script>
 
 
-<div>
-	<h1>{issuer_name}</h1>
-	<h3>{is_in}</h3>
-</div>
-<div class="eventList">
-	<h2>Short events</h2>
-	{#each {length: num_events}, idx}
-	<div>
-		<a href="/instrument/{id}/{idx}">{eventList[idx]}</a>
+<div class="pageLayout">
+	<div class="header">
+		<h1>{issuer_name}</h1>
+		<h3>{is_in}</h3>
 	</div>
-	{/each}
+
+	<div class="eventList">
+		<h2>Short events</h2>
+		{#each {length: num_events}, idx}
+		<div>
+			<!-- <a href="/instrument/event/?id={id}-{idx}">{eventList[idx]}</a> -->
+			<button onclick={() => handle_load_event(idx)}>{eventList[idx]['date']}</button>
+		</div>
+		{/each}
+	</div>
+
+	<div class="eventInspectorPanel">
+		<h2>test</h2>
+		<UnderlyingPosition e_id="{id}", bind:p_idx="{positionIDX}"/>
+	</div>
 </div>
 
+<style>
+.pageLayout{
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	
+}
+
+.header{
+	grid-column: 1;
+}
+
+.eventList{
+	grid-column: 1;
+}
+
+.eventInspectorPanel{
+	grid-column: 2;
+}
+
+</style>
