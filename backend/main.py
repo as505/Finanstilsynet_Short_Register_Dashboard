@@ -64,7 +64,7 @@ def get_event_position_list(id:int, eventID:int):
 	return event['activePositions']
 
 @app.get("/instrument/{id}/{eventID}/positionCount")
-def get_event_position_list(id:int, eventID:int):
+def get_event_positions_count(id:int, eventID:int):
 	event = get_instrument_event(id, eventID)
 	return len(event['activePositions'])
 

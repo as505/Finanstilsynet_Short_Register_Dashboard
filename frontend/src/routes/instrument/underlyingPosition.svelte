@@ -1,54 +1,36 @@
 <script lang="ts">
 	import URLLIST from '$lib/GLOBAL_URLS.json';
 	import { onMount } from "svelte";
-	
 
-	type Props = {i_id:number, e_idx:number}
-	let {i_id, e_idx} : Props = $props();
+	type Props = {i_id:number, e_idx:number, up_id:number}
+	let {i_id, e_idx, up_id} : Props = $props();
 
-	let positionDate = $state('')
-	let positionShortPercent = $state('')
-	let positionShares = $state('')
-	let positionsCount = $state(-1)
+	let date = $state('')
+	let shortPercent = $state('')
+	let shares = $state('')
+	let positionHolder = $state('')
 
 
 	async function fetchSelf(){
-		let url = URLLIST['root'] + URLLIST['get_instrument'] + JSON.stringify(i_id) + '/' + JSON.stringify(e_idx);
-		let data = await fetch(url)
-			.then(d => d.json())
-			.catch(e => console.error("ERROR in underlyingPosition fetchSelf()"))
-		
-		positionDate = data['date'];
-		positionShortPercent = data['shortPercent'];
-		positionShares = data['shares'];
-		
-		return data;
-	}
-
-	async function fetchPositionsCount(){
-		let url = URLLIST['root'] + URLLIST['get_instrument'] + JSON.stringify(i_id) + '/' + JSON.stringify(e_idx) + "/positionCount";
+		let url = URLLIST['root'] + URLLIST['get_instrument'] + JSON.stringify(i_id) + '/' + JSON.stringify(e_idx) + "/" + JSON.stringify(up_id);
 		let result = await fetch(url)
-			.then(d => d.text())
-			.then(s => parseInt(s))
+			.then(d => d.json())
 			.catch(e => console.error("ERROR can't fetch position count"))
 		
-		positionsCount = result
-		
+		date = result['date']
+		shortPercent = result['shortPercent']
+		shares = result['shares']
+		positionHolder = result['positionHolder']
 	}
 
-	onMount(async() =>{
-		await fetchSelf();
-		await fetchPositionsCount();
-	})
+	onMount(async() => fetchSelf())
+
 
 </script>
 
-
-<div class="container">
-	<p>{positionDate}</p>
-	<p>{positionShortPercent}</p>
-	<p>{positionShares}</p>
-	{#each {length: positionsCount}, idx}
-		<p>A</p>		
-	{/each}
-</div>	
+<div>
+	<p>{date}</p>
+	<p>{shortPercent}</p>
+	<p>{shares}</p>
+	<p>{positionHolder}</p>
+</div>

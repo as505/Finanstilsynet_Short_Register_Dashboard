@@ -1,6 +1,6 @@
 <script lang="ts">
 	import URLLIST from '$lib/GLOBAL_URLS.json';
-	import UnderlyingPosition from './underlyingPosition.svelte';
+	import ShortEvent from './shortEvent.svelte';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 
@@ -57,7 +57,6 @@
 		<h2>Short events</h2>
 		{#each {length: num_events}, idx}
 		<div>
-			<!-- <a href="/instrument/event/?id={id}-{idx}">{eventList[idx]}</a> -->
 			<button onclick={() => handle_load_event(idx)}>{eventList[idx]['date']}</button>
 		</div>
 		{/each}
@@ -66,7 +65,7 @@
 	<div class="eventInspectorPanel">
 		<h2>Info</h2>
 		{#key eventIDX}
-		<UnderlyingPosition i_id={id} e_idx={eventIDX}/>
+		<ShortEvent i_id={id} e_idx={eventIDX}/>
 		{/key}
 	</div>
 </div>
